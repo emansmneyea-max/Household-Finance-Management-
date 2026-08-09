@@ -1,15 +1,11 @@
 
+-- Minimal MVP: transactions table only
 
--- Users & households
-users (id, email, password_hash, name, created_at)
-households (id, name, created_at)
-household_members (household_id, user_id, role)  -- owner | member
-
--- Finance
-categories (id, household_id, name, type)        -- income | expense
-transactions (id, household_id, category_id, amount, date, note, created_by)
-budgets (id, household_id, category_id, month, limit_amount)
-
--- Optional later
-recurring_transactions (id, household_id, category_id, amount, frequency, next_date)
-savings_goals (id, household_id, name, target_amount, current_amount, deadline)
+CREATE TABLE transactions (
+  id          SERIAL PRIMARY KEY,
+  amount      DECIMAL(10, 2) NOT NULL,
+  type        VARCHAR(10) NOT NULL CHECK (type IN ('income', 'expense')),
+  description VARCHAR(255),
+  date        DATE NOT NULL DEFAULT CURRENT_DATE,
+  created_at  TIMESTAMP DEFAULT NOW()
+);
