@@ -1,20 +1,74 @@
-🏠 Household Finance Manager
+# Household Finance Tracker
 
-A full-stack web application designed to help households — families, couples, or roommates — manage shared and personal finances, track daily transactions, enforce monthly budgets, and reach savings goals together.
+Full-stack app for tracking household income and expenses.
 
---
+## Tech Stack
 
-## ✨ Features
+| Layer | Technology |
+|-------|------------|
+| Frontend | React + Vite |
+| Backend | Express + ES Modules |
+| Database | PostgreSQL (Neon) |
+| DevOps | Docker Compose (optional) |
 
-### 👥 Household & Member Management
-* **Multi-User Households:** Create and join distinct household groups.
-* **Role-Based Access:** Differentiate between Household **Owners** (administrators) and **Members**.
+## Project Structure
 
-### 💰 Transaction & Category Management
-* **Custom Categories:** Organize finances into tailored categories classified as either **Income** or **Expense**.
-* **Activity Logging:** Log individual transactions with amount, date, notes, and creator tracking.
+```
+Finance-Tracker/
+├── my-app/          # React frontend
+├── server/          # Express backend
+├── docker-compose.yml
+└── README.md
+```
 
-### 📊 Financial Planning & Automation
-* **Monthly Budgets:** Define category-specific spending limits per month to keep track of limits.
-* **Recurring Transactions:** Track recurring expenses and income (subscriptions, rent, salaries) with scheduled execution dates.
-* **Savings Goals:** Set specific financial targets, monitor progress toward accumulated amounts, and track deadlines.
+## Quick Start
+
+### 1. Database (Neon)
+
+1. Create a free project at https://neon.tech
+2. Run `server/schema.sql` in Neon SQL Editor
+3. Copy connection string to `server/.env`
+
+### 2. Backend
+
+```bash
+cd server
+cp .env.example .env
+npm install
+npm run dev
+```
+
+API: http://localhost:4000
+
+### 3. Frontend
+
+```bash
+cd my-app
+npm install
+npm run dev
+```
+
+App: http://localhost:5173
+
+## API Endpoints
+
+- `GET /health` — health check
+- `GET /api/transactions` — list transactions
+- `POST /api/transactions` — add transaction
+- `DELETE /api/transactions/:id` — delete transaction
+
+## Branch Strategy
+
+- `main` — production
+- `develop` — integration
+- `feature/*` — feature branches
+
+## Roadmap
+
+| Sprint | Status |
+|--------|--------|
+| Sprint 0 | Project scaffold + transactions MVP |
+| Sprint 1 | Auth + households |
+| Sprint 2 | Categories |
+| Sprint 3 | Dashboard reports |
+| Sprint 4 | Budgets |
