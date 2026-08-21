@@ -1,16 +1,37 @@
-# React + Vite
+# Household Finance Tracker — Frontend (Client)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite client application for the Finance Tracker project.
 
-Currently, two official plugins are available:
+## Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+# Start backend first (server folder)
+cd ../server
+npm run dev
 
-## React Compiler
+# Then start frontend
+cd ../my-app
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Open http://localhost:5173
 
-## Expanding the ESLint configuration
+## Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+src/
+├── main.jsx              # React entry point
+├── App.jsx               # Root component
+├── pages/Dashboard.jsx   # Main page (state + logic)
+├── components/           # UI components
+├── services/api.js       # Backend API calls
+└── utils/format.js       # Format money and dates
+```
+
+## Features
+
+- View income, expenses, and balance
+- Add transactions (POST)
+- Delete transactions (DELETE)
+- API connection status indicator

@@ -199,6 +199,17 @@
   cursor: not-allowed;
 }
 
+.button--danger {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.button--danger:hover:not(:disabled) {
+  background: #fecaca;
+}
+
 .transaction-list {
   list-style: none;
   margin: 1.25rem 0 0;
@@ -284,6 +295,12 @@
   background: #fef2f2;
   color: #991b1b;
   border: 1px solid #fecaca;
+}
+
+.alert--success {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
 }
 
 .alert code {

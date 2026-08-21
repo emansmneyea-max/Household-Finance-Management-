@@ -1,6 +1,11 @@
 import TransactionItem from "./TransactionItem.jsx";
 
-export default function TransactionList({ transactions, loading }) {
+export default function TransactionList({
+  transactions,
+  loading,
+  onDelete,
+  deletingId,
+}) {
   if (loading) {
     return (
       <section className="panel">
@@ -17,7 +22,7 @@ export default function TransactionList({ transactions, loading }) {
       <section className="panel">
         <div className="panel__header">
           <h2>Recent Transactions</h2>
-          <p>No transactions yet. Add your first one above.</p>
+          <p>No transactions yet. Add your first one on the left.</p>
         </div>
         <p className="empty-state">Your transaction history will appear here.</p>
       </section>
@@ -28,11 +33,18 @@ export default function TransactionList({ transactions, loading }) {
     <section className="panel">
       <div className="panel__header">
         <h2>Recent Transactions</h2>
-        <p>{transactions.length} transaction{transactions.length !== 1 ? "s" : ""}</p>
+        <p>
+          {transactions.length} transaction{transactions.length !== 1 ? "s" : ""}
+        </p>
       </div>
       <ul className="transaction-list">
         {transactions.map((transaction) => (
-          <TransactionItem key={transaction.id} transaction={transaction} />
+          <TransactionItem
+            key={transaction.id}
+            transaction={transaction}
+            onDelete={onDelete}
+            deleting={deletingId === transaction.id}
+          />
         ))}
       </ul>
     </section>

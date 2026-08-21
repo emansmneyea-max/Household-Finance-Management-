@@ -1,9 +1,4 @@
-function formatMoney(value) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(Number(value) || 0);
-}
+import { formatMoney } from "../utils/format.js";
 
 export default function SummaryCards({ transactions }) {
   const income = transactions

@@ -5,6 +5,7 @@ import TransactionForm from "../components/TransactionForm.jsx";
 import TransactionList from "../components/TransactionList.jsx";
 import {
   createTransaction,
+  deleteTransaction,
   getHealth,
   getTransactions,
 } from "../services/api.js";
@@ -14,7 +15,9 @@ export default function Dashboard() {
   const [apiStatus, setApiStatus] = useState("checking");
   const [loadingList, setLoadingList] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const loadTransactions = useCallback(async () => {
     setLoadingList(true);
@@ -45,11 +48,31 @@ export default function Dashboard() {
 
   async function handleCreateTransaction(data) {
     setSubmitting(true);
+    setSuccess("");
     try {
       await createTransaction(data);
       await loadTransactions();
+      setSuccess("Transaction added successfully.");
+    } catch (err) {
+      setError(err.message);
+      throw err;
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleDeleteTransaction(id) {
+    setDeletingId(id);
+    setError("");
+    setSuccess("");
+    try {
+      await deleteTransaction(id);
+      await loadTransactions();
+      setSuccess("Transaction deleted.");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -65,12 +88,18 @@ export default function Dashboard() {
       )}
 
       {error && <div className="alert alert--error">{error}</div>}
+      {success && <div className="alert alert--success">{success}</div>}
 
       <SummaryCards transactions={transactions} />
 
       <div className="dashboard-grid">
         <TransactionForm onSubmit={handleCreateTransaction} loading={submitting} />
-        <TransactionList transactions={transactions} loading={loadingList} />
+        <TransactionList
+          transactions={transactions}
+          loading={loadingList}
+          onDelete={handleDeleteTransaction}
+          deletingId={deletingId}
+        />
       </div>
     </div>
   );

@@ -1,19 +1,6 @@
-function formatMoney(value) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(Number(value) || 0);
-}
+import { formatDate, formatMoney } from "../utils/format.js";
 
-function formatDate(value) {
-  return new Date(value).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-export default function TransactionItem({ transaction }) {
+export default function TransactionItem({ transaction, onDelete, deleting }) {
   const isIncome = transaction.type === "income";
 
   return (
@@ -30,6 +17,15 @@ export default function TransactionItem({ transaction }) {
           {isIncome ? "+" : "-"}
           {formatMoney(transaction.amount)}
         </strong>
+        <button
+          type="button"
+          className="button button--danger"
+          onClick={() => onDelete(transaction.id)}
+          disabled={deleting}
+          aria-label={`Delete ${transaction.description || "transaction"}`}
+        >
+          Delete
+        </button>
       </div>
     </li>
   );
