@@ -29,6 +29,14 @@ src/
 └── utils/format.js       # Format money and dates
 ```
 
+## Tests
+
+```bash
+npm test
+```
+
+Checks money and date formatting (`src/utils/format.js`).
+
 ## Features
 
 - View income, expenses, and balance

@@ -53,6 +53,12 @@ export function createTransaction(data) {
     body: JSON.stringify(data),
   });
 }
+export function updateTransaction(id, data) {
+  return request(`/api/transactions/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
 
 /**
  * DELETE /api/transactions/:id
