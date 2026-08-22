@@ -19,8 +19,19 @@ app.get("/api", (req, res) => {
       health: "GET /health",
       transactions: "GET /api/transactions",
       createTransaction: "POST /api/transactions",
+      updateTransaction: "PUT /api/transactions/:id",
       getTransaction: "GET /api/transactions/:id",
       deleteTransaction: "DELETE /api/transactions/:id",
+      categories: "GET /api/categories",
+      createCategory: "POST /api/categories",
+      getCategory: "GET /api/categories/:id",
+      deleteCategory: "DELETE /api/categories/:id",
+      users: "GET /api/users",
+      createUser: "POST /api/users",
+      getUser: "GET /api/users/:id",
+      deleteUser: "DELETE /api/users/:id",
+    
+
     },
   });
 });

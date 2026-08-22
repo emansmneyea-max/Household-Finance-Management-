@@ -1,7 +1,7 @@
 
 -- Minimal MVP: transactions table only
 
-CREATE TABLE transactions (
+CREATE TABLE IF NOT EXISTS transactions (
   id          SERIAL PRIMARY KEY,
   amount      DECIMAL(10, 2) NOT NULL,
   type        VARCHAR(10) NOT NULL CHECK (type IN ('income', 'expense')),

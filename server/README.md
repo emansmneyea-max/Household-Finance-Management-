@@ -14,6 +14,7 @@ server/
 │   ├── controllers/          # Request/response logic
 │   ├── routes/               # API endpoints
 │   └── middleware/           # 404 + error handling
+├── tests/                    # API integration tests
 ├── schema.sql                # Database schema
 ├── .env                      # Secrets (not in Git)
 └── package.json
@@ -31,6 +32,19 @@ npm run dev
 
 API runs at http://localhost:4000
 
+## Tests
+
+API tests hit Express and a real Postgres database. They **truncate** `transactions`, `categories`, and `users`, so use a dedicated URL in `TEST_DATABASE_URL` — not your production Neon database.
+
+```bash
+# Optional local DB from the repo root:
+docker compose up -d
+
+cd server
+# Set TEST_DATABASE_URL in .env (see .env.example)
+npm test
+```
+
 ## API Endpoints
 
 | Method | URL | Description |
@@ -40,7 +54,16 @@ API runs at http://localhost:4000
 | GET | `/api/transactions` | List all transactions |
 | GET | `/api/transactions/:id` | Get one transaction |
 | POST | `/api/transactions` | Create transaction |
+| PUT | `/api/transactions/:id` | Update transaction |
 | DELETE | `/api/transactions/:id` | Delete transaction |
+| GET | `/api/categories` | List all categories |
+| GET | `/api/categories/:id` | Get one category |
+| POST | `/api/categories` | Create category |
+| DELETE | `/api/categories/:id` | Delete category |
+| GET | `/api/users` | List all users |
+| GET | `/api/users/:id` | Get one user |
+| POST | `/api/users` | Create user |
+| DELETE | `/api/users/:id` | Delete user |
 
 ### POST body example
 
