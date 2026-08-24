@@ -29,6 +29,7 @@ export default function Dashboard() {
   const [deletingCategoryId, setDeletingCategoryId] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [currency, setCurrency] = useState("ILS");
 
   const loadTransactions = useCallback(async () => {
     setLoadingList(true);
@@ -148,7 +149,12 @@ export default function Dashboard() {
 
   return (
     <div className="app-shell">
-      <Header status={apiStatus} />
+     
+      <Header
+     status={apiStatus}
+     currency={currency}
+     onCurrencyChange={setCurrency}
+      />
 
       {apiStatus === "offline" && (
         <div className="alert alert--error">
