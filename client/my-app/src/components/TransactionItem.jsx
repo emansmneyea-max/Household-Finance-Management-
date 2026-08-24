@@ -8,9 +8,6 @@ export default function TransactionItem({ transaction, onEdit, onDelete, deletin
       <div className="transaction__info">
         <div className="transaction__title">
           <strong>{transaction.description || "No description"}</strong>
-          {transaction.category_name && (
-            <span className="transaction__category">{transaction.category_name}</span>
-          )}
         </div>
         <span className="transaction__date">{formatDate(transaction.date)}</span>
       </div>
