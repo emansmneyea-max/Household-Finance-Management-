@@ -1,5 +1,5 @@
 
-
+import { formatDate, formatMoney } from "../utils/format.js";
 export const CURRENCIES = [
   { code: "ILS", label: "₪ ILS" },
   { code: "USD", label: "$ USD" },
@@ -19,4 +19,11 @@ export function formatMoney(value, currency = "ILS") {
     style: "currency",
     currency,
   }).format(Number(value) || 0);
+}
+export function formatDate(value) {
+  return new Date(value).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
