@@ -5,12 +5,12 @@ React + Vite client application for the Finance Tracker project.
 ## Run
 
 ```bash
-# Start backend first (server folder)
-cd ../server
+# Start backend first (from repo root)
+cd ../../server
 npm run dev
 
 # Then start frontend
-cd ../my-app
+cd ../client/my-app
 npm install
 npm run dev
 ```

@@ -15,7 +15,8 @@ Full-stack app for tracking household income and expenses.
 
 ```
 Finance-Tracker/
-├── my-app/          # React frontend
+├── client/
+│   └── my-app/      # React frontend
 ├── server/          # Express backend
 ├── docker-compose.yml
 └── README.md
@@ -43,7 +44,7 @@ API: http://localhost:4000
 ### 3. Frontend
 
 ```bash
-cd my-app
+cd client/my-app
 npm install
 npm run dev
 ```
