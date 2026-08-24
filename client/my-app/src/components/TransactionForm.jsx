@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const initialForm = {
   amount: "",
@@ -7,9 +7,24 @@ const initialForm = {
   date: new Date().toISOString().split("T")[0],
 };
 
-export default function TransactionForm({ onSubmit, loading }) {
+export default function TransactionForm({ onSubmit, loading, transaction }) {
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+  if (!transaction) {
+    return;
+  }
+
+  const dateValue = String(transaction.date).slice(0, 10);
+
+  setForm({
+    amount: String(transaction.amount),
+    type: transaction.type,
+    description: transaction.description || "",
+    date: dateValue,
+  });
+}, [transaction]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -41,7 +56,7 @@ export default function TransactionForm({ onSubmit, loading }) {
   return (
     <section className="panel">
       <div className="panel__header">
-        <h2>Add Transaction</h2>
+        <h2>{transaction ? "Edit Transaction" : "Add Transaction"}</h2>
         <p>Record a new income or expense</p>
       </div>
 
@@ -97,7 +112,7 @@ export default function TransactionForm({ onSubmit, loading }) {
         {error && <p className="form__error">{error}</p>}
 
         <button type="submit" className="button button--primary" disabled={loading}>
-          {loading ? "Saving..." : "Add Transaction"}
+          {loading ? "Saving..." : transaction ? "Save changes" : "Add Transaction"}
         </button>
       </form>
     </section>

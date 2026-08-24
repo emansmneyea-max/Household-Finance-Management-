@@ -3,6 +3,7 @@ import TransactionItem from "./TransactionItem.jsx";
 export default function TransactionList({
   transactions,
   loading,
+  onEdit,
   onDelete,
   deletingId,
 }) {
@@ -29,6 +30,7 @@ export default function TransactionList({
     );
   }
 
+
   return (
     <section className="panel">
       <div className="panel__header">
@@ -42,6 +44,7 @@ export default function TransactionList({
           <TransactionItem
             key={transaction.id}
             transaction={transaction}
+            onEdit={onEdit}
             onDelete={onDelete}
             deleting={deletingId === transaction.id}
           />

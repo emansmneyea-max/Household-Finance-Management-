@@ -4,7 +4,9 @@ import SummaryCards from "../components/SummaryCards.jsx";
 import TransactionForm from "../components/TransactionForm.jsx";
 import TransactionList from "../components/TransactionList.jsx";
 import {
+  
   createTransaction,
+  updateTransaction,
   deleteTransaction,
   getHealth,
   getTransactions,
@@ -15,6 +17,7 @@ export default function Dashboard() {
   const [apiStatus, setApiStatus] = useState("checking");
   const [loadingList, setLoadingList] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -46,20 +49,34 @@ export default function Dashboard() {
     loadTransactions();
   }, [loadTransactions]);
 
-  async function handleCreateTransaction(data) {
+  async function handleSubmitTransaction(data) {
     setSubmitting(true);
     setSuccess("");
+    setError("");
     try {
+       if (editingTransaction) {
+      await updateTransaction(editingTransaction.id, data);
+      setEditingTransaction(null);
+      setSuccess("Transaction updated.");
+    } else {
       await createTransaction(data);
-      await loadTransactions();
       setSuccess("Transaction added successfully.");
-    } catch (err) {
+      }
+      await loadTransactions();
+    } 
+    catch (err) {
       setError(err.message);
       throw err;
     } finally {
       setSubmitting(false);
     }
   }
+
+  function handleStartEdit(transaction) {
+  setError("");
+  setSuccess("");
+  setEditingTransaction(transaction);
+}
 
   async function handleDeleteTransaction(id) {
     setDeletingId(id);
@@ -93,10 +110,16 @@ export default function Dashboard() {
       <SummaryCards transactions={transactions} />
 
       <div className="dashboard-grid">
-        <TransactionForm onSubmit={handleCreateTransaction} loading={submitting} />
+        <TransactionForm 
+       
+        transaction={editingTransaction}
+        onSubmit={handleSubmitTransaction}
+        loading={submitting}
+          /> 
         <TransactionList
           transactions={transactions}
           loading={loadingList}
+          onEdit={handleStartEdit}
           onDelete={handleDeleteTransaction}
           deletingId={deletingId}
         />
