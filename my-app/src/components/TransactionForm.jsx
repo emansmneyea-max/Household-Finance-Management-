@@ -1,0 +1,105 @@
+import { useState } from "react";
+
+const initialForm = {
+  amount: "",
+  type: "expense",
+  description: "",
+  date: new Date().toISOString().split("T")[0],
+};
+
+export default function TransactionForm({ onSubmit, loading }) {
+  const [form, setForm] = useState(initialForm);
+  const [error, setError] = useState("");
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError("");
+
+    if (!form.amount || Number(form.amount) <= 0) {
+      setError("Please enter a valid amount.");
+      return;
+    }
+
+    try {
+      await onSubmit({
+        amount: Number(form.amount),
+        type: form.type,
+        description: form.description.trim(),
+        date: form.date,
+      });
+      setForm({ ...initialForm, date: new Date().toISOString().split("T")[0] });
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  return (
+    <section className="panel">
+      <div className="panel__header">
+        <h2>Add Transaction</h2>
+        <p>Record a new income or expense</p>
+      </div>
+
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="form__row">
+          <label className="form__field">
+            <span>Amount</span>
+            <input
+              type="number"
+              name="amount"
+              min="0.01"
+              step="0.01"
+              placeholder="0.00"
+              value={form.amount}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label className="form__field">
+            <span>Type</span>
+            <select name="type" value={form.type} onChange={handleChange}>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="form__row">
+          <label className="form__field">
+            <span>Description</span>
+            <input
+              type="text"
+              name="description"
+              placeholder="e.g. Groceries, Salary"
+              value={form.description}
+              onChange={handleChange}
+            />
+          </label>
+
+          <label className="form__field">
+            <span>Date</span>
+            <input
+              type="date"
+              name="date"
+              value={form.date}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+
+        {error && <p className="form__error">{error}</p>}
+
+        <button type="submit" className="button button--primary" disabled={loading}>
+          {loading ? "Saving..." : "Add Transaction"}
+        </button>
+      </form>
+    </section>
+  );
+}
