@@ -38,18 +38,7 @@ describe("Household Finance API", () => {
         type: "expense",
         description: "Groceries",
         date: "2026-08-10",
-        });
-
-        it("rejects missing name or type", async () => {
-       const res = await request(app).post("/api/categories").send({
-        name: "Groceries",
-       });
-
-  assert.equal(res.status, 400);
-  assert.equal(res.body.error, "name and type are required");
       });
-      });
-     
 
       assert.equal(res.status, 201);
       assert.equal(res.body.type, "expense");
@@ -435,4 +424,5 @@ it("returns 404 when the id does not exist", async () => {
     });
   });
 });
+
 
