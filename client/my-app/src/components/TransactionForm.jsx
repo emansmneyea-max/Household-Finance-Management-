@@ -5,9 +5,15 @@ const initialForm = {
   type: "expense",
   description: "",
   date: new Date().toISOString().split("T")[0],
+  category_id: "",
 };
 
-export default function TransactionForm({ onSubmit, loading, transaction }) {
+export default function TransactionForm({
+  onSubmit,
+  loading,
+  transaction,
+  categories = [],
+}) {
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
 
@@ -23,6 +29,8 @@ export default function TransactionForm({ onSubmit, loading, transaction }) {
     type: transaction.type,
     description: transaction.description || "",
     date: dateValue,
+    category_id:
+      transaction.category_id != null ? String(transaction.category_id) : "",
   });
 }, [transaction]);
 
@@ -46,6 +54,7 @@ export default function TransactionForm({ onSubmit, loading, transaction }) {
         type: form.type,
         description: form.description.trim(),
         date: form.date,
+        category_id: form.category_id ? Number(form.category_id) : null,
       });
       setForm({ ...initialForm, date: new Date().toISOString().split("T")[0] });
     } catch (err) {
@@ -108,6 +117,26 @@ export default function TransactionForm({ onSubmit, loading, transaction }) {
             />
           </label>
         </div>
+
+        <label className="form__field">
+          <span>Category</span>
+          <select
+            name="category_id"
+            value={form.category_id}
+            onChange={handleChange}
+          >
+            <option value="">
+              {categories.length === 0
+                ? "No categories yet"
+                : "Select a category"}
+            </option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name} ({category.type})
+              </option>
+            ))}
+          </select>
+        </label>
 
         {error && <p className="form__error">{error}</p>}
 

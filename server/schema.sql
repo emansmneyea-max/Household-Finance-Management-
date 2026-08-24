@@ -24,3 +24,6 @@ CREATE TABLE IF NOT EXISTS categories (
   type       VARCHAR(10) NOT NULL CHECK (type IN ('income', 'expense')),
   created_at TIMESTAMP DEFAULT NOW()
 );
+
+ALTER TABLE transactions
+  ADD COLUMN IF NOT EXISTS category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL;

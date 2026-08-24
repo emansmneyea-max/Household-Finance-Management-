@@ -106,6 +106,7 @@
   display: grid;
   grid-template-columns: 1fr 1.2fr;
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .panel {
@@ -239,6 +240,19 @@
 
 .transaction__info strong {
   color: #0f172a;
+}
+
+.transaction__title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.transaction__category {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .transaction__info span {

@@ -1,4 +1,5 @@
 import * as transactionModel from "../models/transaction.model.js";
+import * as categoryModel from "../models/category.model.js";
 
 function parseId(value) {
   const id = Number(value);
@@ -14,6 +15,24 @@ function parseAmount(value) {
     return null;
   }
   return amount;
+}
+
+async function parseCategoryId(value) {
+  if (value == null || value === "") {
+    return { ok: true, id: null };
+  }
+
+  const id = parseId(value);
+  if (!id) {
+    return { ok: false, error: "Invalid category id" };
+  }
+
+  const category = await categoryModel.findById(id);
+  if (!category) {
+    return { ok: false, error: "Category not found" };
+  }
+
+  return { ok: true, id };
 }
 
 export async function getAllTransactions(req, res) {
@@ -48,7 +67,7 @@ export async function getTransactionById(req, res) {
 
 export async function createTransaction(req, res) {
   try {
-    const { amount, type, description, date } = req.body;
+    const { amount, type, description, date, category_id } = req.body;
 
     if (amount == null || amount === "" || !type) {
       return res.status(400).json({ error: "amount and type are required" });
@@ -63,11 +82,17 @@ export async function createTransaction(req, res) {
       return res.status(400).json({ error: "type must be income or expense" });
     }
 
+    const categoryId = await parseCategoryId(category_id);
+    if (!categoryId.ok) {
+      return res.status(400).json({ error: categoryId.error });
+    }
+
     const transaction = await transactionModel.create({
       amount: parsedAmount,
       type,
       description,
       date,
+      category_id: categoryId.id,
     });
 
     res.status(201).json(transaction);
@@ -85,7 +110,7 @@ export async function updateTransaction(req, res) {
       return res.status(400).json({ error: "Invalid transaction id" });
     }
 
-    const { amount, type, description, date } = req.body;
+    const { amount, type, description, date, category_id } = req.body;
 
     if (amount == null || amount === "" || !type) {
       return res.status(400).json({ error: "amount and type are required" });
@@ -100,11 +125,17 @@ export async function updateTransaction(req, res) {
       return res.status(400).json({ error: "type must be income or expense" });
     }
 
+    const categoryId = await parseCategoryId(category_id);
+    if (!categoryId.ok) {
+      return res.status(400).json({ error: categoryId.error });
+    }
+
     const transaction = await transactionModel.update(id, {
       amount: parsedAmount,
       type,
       description,
       date,
+      category_id: categoryId.id,
     });
 
     if (!transaction) {

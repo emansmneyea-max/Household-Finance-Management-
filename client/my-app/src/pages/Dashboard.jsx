@@ -3,22 +3,30 @@ import Header from "../components/Header.jsx";
 import SummaryCards from "../components/SummaryCards.jsx";
 import TransactionForm from "../components/TransactionForm.jsx";
 import TransactionList from "../components/TransactionList.jsx";
+import CategoryForm from "../components/CategoryForm.jsx";
+import CategoryList from "../components/CategoryList.jsx";
 import {
-  
   createTransaction,
   updateTransaction,
   deleteTransaction,
+  createCategory,
+  deleteCategory,
   getHealth,
   getTransactions,
+  getCategories,
 } from "../services/api.js";
 
 export default function Dashboard() {
   const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [apiStatus, setApiStatus] = useState("checking");
   const [loadingList, setLoadingList] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [submittingCategory, setSubmittingCategory] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [deletingCategoryId, setDeletingCategoryId] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -35,6 +43,19 @@ export default function Dashboard() {
     }
   }, []);
 
+  const loadCategories = useCallback(async () => {
+    setLoadingCategories(true);
+    setError("");
+    try {
+      const data = await getCategories();
+      setCategories(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingCategories(false);
+    }
+  }, []);
+
   useEffect(() => {
     async function checkHealth() {
       try {
@@ -47,7 +68,8 @@ export default function Dashboard() {
 
     checkHealth();
     loadTransactions();
-  }, [loadTransactions]);
+    loadCategories();
+  }, [loadTransactions, loadCategories]);
 
   async function handleSubmitTransaction(data) {
     setSubmitting(true);
@@ -93,6 +115,37 @@ export default function Dashboard() {
     }
   }
 
+  async function handleSubmitCategory(data) {
+    setSubmittingCategory(true);
+    setSuccess("");
+    setError("");
+    try {
+      await createCategory(data);
+      setSuccess("Category added.");
+      await loadCategories();
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setSubmittingCategory(false);
+    }
+  }
+
+  async function handleDeleteCategory(id) {
+    setDeletingCategoryId(id);
+    setError("");
+    setSuccess("");
+    try {
+      await deleteCategory(id);
+      await loadCategories();
+      setSuccess("Category deleted.");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeletingCategoryId(null);
+    }
+  }
+
   return (
     <div className="app-shell">
       <Header status={apiStatus} />
@@ -113,6 +166,7 @@ export default function Dashboard() {
         <TransactionForm 
        
         transaction={editingTransaction}
+        categories={categories}
         onSubmit={handleSubmitTransaction}
         loading={submitting}
           /> 
@@ -122,6 +176,19 @@ export default function Dashboard() {
           onEdit={handleStartEdit}
           onDelete={handleDeleteTransaction}
           deletingId={deletingId}
+        />
+      </div>
+
+      <div className="dashboard-grid">
+        <CategoryForm
+          onSubmit={handleSubmitCategory}
+          loading={submittingCategory}
+        />
+        <CategoryList
+          categories={categories}
+          loading={loadingCategories}
+          onDelete={handleDeleteCategory}
+          deletingId={deletingCategoryId}
         />
       </div>
     </div>

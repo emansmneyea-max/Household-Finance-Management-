@@ -5,7 +5,7 @@
  * so we use relative paths (no hardcoded host).
  *
  * Backend contract (server/schema.sql + Express routes):
- *   transactions: id, amount, type ('income'|'expense'), description, date, created_at
+ *   transactions: id, amount, type ('income'|'expense'), description, date, category_id, created_at
  */
 
 const API_BASE = "";
@@ -44,7 +44,7 @@ export function getTransactionById(id) {
 
 /**
  * POST /api/transactions
- * Body: { amount, type: 'income'|'expense', description?, date? }
+ * Body: { amount, type: 'income'|'expense', description?, date?, category_id? }
  * → created Transaction (201)
  */
 export function createTransaction(data) {
@@ -66,6 +66,33 @@ export function updateTransaction(id, data) {
  */
 export function deleteTransaction(id) {
   return request(`/api/transactions/${id}`, {
+    method: "DELETE",
+  });
+}
+
+/** GET /api/categories → Category[] */
+export function getCategories() {
+  return request("/api/categories");
+}
+
+/**
+ * POST /api/categories
+ * Body: { name, type: 'income'|'expense' }
+ * → created Category (201)
+ */
+export function createCategory(data) {
+  return request("/api/categories", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * DELETE /api/categories/:id
+ * → { message, category }
+ */
+export function deleteCategory(id) {
+  return request(`/api/categories/${id}`, {
     method: "DELETE",
   });
 }

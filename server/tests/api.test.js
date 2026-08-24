@@ -73,6 +73,36 @@ describe("Household Finance API", () => {
       assert.equal(res.status, 400);
       assert.equal(res.body.error, "type must be income or expense");
     });
+
+    it("saves category_id when the category exists", async () => {
+      const category = await request(app).post("/api/categories").send({
+        name: "Food",
+        type: "expense",
+      });
+
+      const res = await postTransaction({
+        amount: 12,
+        type: "expense",
+        description: "Lunch",
+        category_id: category.body.id,
+      });
+
+      assert.equal(res.status, 201);
+      assert.equal(res.body.category_id, category.body.id);
+      assert.equal(res.body.category_name, "Food");
+    });
+
+    it("rejects a category_id that does not exist", async () => {
+      const res = await postTransaction({
+        amount: 12,
+        type: "expense",
+        description: "Lunch",
+        category_id: 999,
+      });
+
+      assert.equal(res.status, 400);
+      assert.equal(res.body.error, "Category not found");
+    });
   });
 
   describe("GET /api/transactions", () => {

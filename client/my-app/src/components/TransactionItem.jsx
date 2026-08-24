@@ -6,8 +6,13 @@ export default function TransactionItem({ transaction, onEdit, onDelete, deletin
   return (
     <li className={`transaction ${isIncome ? "transaction--income" : "transaction--expense"}`}>
       <div className="transaction__info">
-        <strong>{transaction.description || "No description"}</strong>
-        <span>{formatDate(transaction.date)}</span>
+        <div className="transaction__title">
+          <strong>{transaction.description || "No description"}</strong>
+          {transaction.category_name && (
+            <span className="transaction__category">{transaction.category_name}</span>
+          )}
+        </div>
+        <span className="transaction__date">{formatDate(transaction.date)}</span>
       </div>
       <div className="transaction__meta">
         <span className={`transaction__badge transaction__badge--${transaction.type}`}>
