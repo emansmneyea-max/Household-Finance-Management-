@@ -24,6 +24,7 @@ export default function TransactionList({
   onEdit,
   onDelete,
   deletingId,
+  currency,
 }) {
   if (loading) {
     return (
@@ -79,6 +80,7 @@ export default function TransactionList({
                   onEdit={onEdit}
                   onDelete={onDelete}
                   deleting={deletingId === transaction.id}
+                  currency={currency}
                 />
               ))}
             </ul>

@@ -1,6 +1,6 @@
 import { formatDate, formatMoney } from "../utils/format.js";
 
-export default function TransactionItem({ transaction, onEdit, onDelete, deleting }) {
+export default function TransactionItem({ transaction, onEdit, onDelete, deleting,currency }) {
   const isIncome = transaction.type === "income";
 
   return (
@@ -17,7 +17,7 @@ export default function TransactionItem({ transaction, onEdit, onDelete, deletin
         </span>
         <strong className="transaction__amount">
           {isIncome ? "+" : "-"}
-          {formatMoney(transaction.amount)}
+          {formatMoney(transaction.amount,currency)}
         </strong>
 
         <button

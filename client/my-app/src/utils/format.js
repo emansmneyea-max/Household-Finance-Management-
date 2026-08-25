@@ -1,5 +1,5 @@
 
-import { formatDate, formatMoney } from "../utils/format.js";
+
 export const CURRENCIES = [
   { code: "ILS", label: "₪ ILS" },
   { code: "USD", label: "$ USD" },

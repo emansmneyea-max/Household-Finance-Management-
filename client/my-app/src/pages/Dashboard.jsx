@@ -166,7 +166,7 @@ export default function Dashboard() {
       {error && <div className="alert alert--error">{error}</div>}
       {success && <div className="alert alert--success">{success}</div>}
 
-      <SummaryCards transactions={transactions} />
+      <SummaryCards transactions={transactions} currency={currency} />
 
       <div className="dashboard-grid">
         <TransactionForm 
@@ -182,6 +182,7 @@ export default function Dashboard() {
           onEdit={handleStartEdit}
           onDelete={handleDeleteTransaction}
           deletingId={deletingId}
+          currency={currency}
         />
       </div>
 
