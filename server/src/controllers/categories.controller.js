@@ -10,7 +10,7 @@ function parseId(value) {
 
 export async function getAllCategories(req, res) {
   try {
-    const categories = await categoryModel.findAll();
+    const categories = await categoryModel.findAll(req.user.userId);
     res.json(categories);
   } catch (err) {
     console.error(err);
@@ -32,6 +32,8 @@ export async function createCategory(req, res) {
     const category = await categoryModel.create({
       name: name.trim(),
       type,
+       user_id: req.user.userId,
+
     });
 
     res.status(201).json(category);
@@ -47,7 +49,8 @@ export async function getCategoryById(req, res) {
       return res.status(400).json({ error: "Invalid category id" });
     }
 
-    const category = await categoryModel.findById(id);
+    const category = await categoryModel.findById(id, req.user.userId,
+);
     if (!category) {
       return res.status(404).json({ error: "Category not found" });
     }
@@ -66,7 +69,7 @@ export async function deleteCategory(req, res) {
       return res.status(400).json({ error: "Invalid category id" });
     }
 
-    const deleted = await categoryModel.remove(id);
+    const deleted = await categoryModel.remove(id , req.user.userId);
     if (!deleted) {
       return res.status(404).json({ error: "Category not found" });
     }

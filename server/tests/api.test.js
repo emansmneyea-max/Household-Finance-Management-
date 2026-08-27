@@ -6,8 +6,28 @@ import app from "../src/app.js";
 import { closeDatabase, resetDatabase } from "./helpers.js";
 
 async function postTransaction(body) {
-  return request(app).post("/api/transactions").send(body);
+  return request(app)
+    .post("/api/transactions")
+    .set(await authHeader())
+    .send(body);
 }
+let token;
+async function authHeader() {
+  if (!token) {
+    await request(app).post("/api/users").send({
+      email: "tester@example.com",
+      password: "password123",
+      name: "Tester",
+    });
+    const login = await request(app).post("/api/auth/login").send({
+      email: "tester@example.com",
+      password: "password123",
+    });
+    token = login.body.token;
+  }
+  return { Authorization: `Bearer ${token}` };
+}
+
 
 describe("Household Finance API", () => {
   before(async () => {
@@ -16,6 +36,7 @@ describe("Household Finance API", () => {
 
   beforeEach(async () => {
     await resetDatabase();
+    token=null;
   });
 
   after(async () => {

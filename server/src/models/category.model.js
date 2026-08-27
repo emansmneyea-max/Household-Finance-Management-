@@ -3,35 +3,36 @@
 
 import pool from "../config/db.js";
 
-export async function findAll() {
+export async function findAll(userId) {
   const result = await pool.query(
-    "SELECT * FROM categories ORDER BY name ASC"
+     "SELECT * FROM categories WHERE user_id = $1 ORDER BY name ASC",
+     [userId]
   );
   return result.rows;
 }
 
 
-export async function create({ name, type }) {
+export async function create({ name, type,user_id }) {
   const result = await pool.query(
-    `INSERT INTO categories (name, type)
-     VALUES ($1, $2)
+    `INSERT INTO categories (name, type,user_id)
+     VALUES ($1, $2 ,$3)
      RETURNING *`,
-    [name, type]
+    [name, type ,user_id]
   );
   return result.rows[0];
 }
-export async function findById(id) {
+export async function findById(id, userId) {
   const result = await pool.query(
-    "SELECT * FROM categories WHERE id = $1",
-    [id]
+    "SELECT * FROM categories WHERE id = $1 AND user_id = $2",
+    [id ,userId]
   );
   return result.rows[0];
 }
 
-export async function remove(id) {
+export async function remove(id ,userId) {
   const result = await pool.query(
-    "DELETE FROM categories WHERE id = $1 RETURNING *",
-    [id]
+    "DELETE FROM categories WHERE id = $1 AND user_id = $2 RETURNING *",
+    [id,userId]
   );
   return result.rows[0];
 }

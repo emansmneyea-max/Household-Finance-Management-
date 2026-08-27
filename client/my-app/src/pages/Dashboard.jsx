@@ -16,7 +16,7 @@ import {
   getCategories,
 } from "../services/api.js";
 
-export default function Dashboard() {
+export default function Dashboard({onLogout}) {
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [apiStatus, setApiStatus] = useState("checking");
@@ -161,6 +161,8 @@ function handleCancelEdit() {
      status={apiStatus}
      currency={currency}
      onCurrencyChange={setCurrency}
+     onLogout={onLogout}
+
       />
 
       {apiStatus === "offline" && (

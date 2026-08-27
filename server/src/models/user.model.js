@@ -17,8 +17,11 @@ export async function findById(id) {
 
 export async function findByEmail(email) {
   const result = await pool.query(
-    "SELECT id FROM users WHERE email = $1",
+   "SELECT id, email, name, password_hash FROM users WHERE email = $1",
+ 
+
     [email]
+       
   );
   return result.rows[0];
 }

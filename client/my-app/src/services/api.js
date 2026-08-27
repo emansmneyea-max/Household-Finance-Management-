@@ -10,13 +10,28 @@
 
 const API_BASE = "";
 
+const TOKEN_KEY = "token";
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
       ...options.headers,
     },
-    ...options,
   });
 
   if (!response.ok) {
@@ -95,4 +110,21 @@ export function deleteCategory(id) {
   return request(`/api/categories/${id}`, {
     method: "DELETE",
   });
+}
+
+
+export async function login(email, password) {
+  const data = await request("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+  setToken(data.token);
+  return data;
+}
+export async function register(name, email, password) {
+  await request("/api/users", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password }),
+  });
+  return login(email, password);
 }

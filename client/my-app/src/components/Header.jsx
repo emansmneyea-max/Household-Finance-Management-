@@ -1,6 +1,6 @@
 import { CURRENCIES } from "../utils/format.js";
 
-export default function Header({ status, currency, onCurrencyChange }) {
+export default function Header({ status, currency, onCurrencyChange, onLogout }) {
   return (
     <header className="header">
       <div className="header__brand">
@@ -27,8 +27,13 @@ export default function Header({ status, currency, onCurrencyChange }) {
         <div className={`header__status header__status--${status}`}>
           <span className="header__dot" />
           API: {status === "online" ? "Connected" : status === "offline" ? "Offline" : "Checking..."}
-        </div>
-      </div>
-    </header>
-  );
-}
+          {onLogout ? (
+         <button type="button" className="button" onClick={onLogout}>
+          Log out
+           </button>
+          ) : null}
+            </div>
+         </div>
+      </header>
+       );
+       }

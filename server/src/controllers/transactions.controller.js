@@ -9,7 +9,7 @@ function parseId(value) {
   return id;
 }
 
-function parseAmount(value) {
+function parseAmount(value,) {
   const amount = Number(value);
   if (!Number.isFinite(amount) || amount <= 0) {
     return null;
@@ -17,7 +17,7 @@ function parseAmount(value) {
   return amount;
 }
 
-async function parseCategoryId(value) {
+async function parseCategoryId(value, userId) {
   if (value == null || value === "") {
     return { ok: true, id: null };
   }
@@ -27,7 +27,7 @@ async function parseCategoryId(value) {
     return { ok: false, error: "Invalid category id" };
   }
 
-  const category = await categoryModel.findById(id);
+  const category = await categoryModel.findById(id ,userId);
   if (!category) {
     return { ok: false, error: "Category not found" };
   }
@@ -37,7 +37,7 @@ async function parseCategoryId(value) {
 
 export async function getAllTransactions(req, res) {
   try {
-    const transactions = await transactionModel.findAll();
+    const transactions = await transactionModel.findAll(req.user.userId);
     res.json(transactions);
   } catch (err) {
     console.error(err);
@@ -52,7 +52,7 @@ export async function getTransactionById(req, res) {
       return res.status(400).json({ error: "Invalid transaction id" });
     }
 
-    const transaction = await transactionModel.findById(id);
+    const transaction = await transactionModel.findById(id,req.user.userId);
 
     if (!transaction) {
       return res.status(404).json({ error: "Transaction not found" });
@@ -82,7 +82,7 @@ export async function createTransaction(req, res) {
       return res.status(400).json({ error: "type must be income or expense" });
     }
 
-    const categoryId = await parseCategoryId(category_id);
+    const categoryId = await parseCategoryId(category_id, req.user.userId,);
     if (!categoryId.ok) {
       return res.status(400).json({ error: categoryId.error });
     }
@@ -93,6 +93,7 @@ export async function createTransaction(req, res) {
       description,
       date,
       category_id: categoryId.id,
+      user_id: req.user.userId,
     });
 
     res.status(201).json(transaction);
@@ -125,7 +126,7 @@ export async function updateTransaction(req, res) {
       return res.status(400).json({ error: "type must be income or expense" });
     }
 
-    const categoryId = await parseCategoryId(category_id);
+    const categoryId = await parseCategoryId(category_id,req.user.userId);
     if (!categoryId.ok) {
       return res.status(400).json({ error: categoryId.error });
     }
@@ -136,7 +137,8 @@ export async function updateTransaction(req, res) {
       description,
       date,
       category_id: categoryId.id,
-    });
+    }, req.user.userId);
+    
 
     if (!transaction) {
       return res.status(404).json({ error: "Transaction not found" });
@@ -156,7 +158,7 @@ export async function deleteTransaction(req, res) {
       return res.status(400).json({ error: "Invalid transaction id" });
     }
 
-    const deleted = await transactionModel.remove(id);
+    const deleted = await transactionModel.remove(id, req.user.userId);
 
     if (!deleted) {
       return res.status(404).json({ error: "Transaction not found" });
