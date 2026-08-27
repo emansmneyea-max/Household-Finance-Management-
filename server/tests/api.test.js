@@ -96,7 +96,7 @@ describe("Household Finance API", () => {
     });
 
     it("saves category_id when the category exists", async () => {
-      const category = await request(app).post("/api/categories").send({
+      const category = await request(app).post("/api/categories").set(await authHeader()).send({
         name: "Food",
         type: "expense",
       });
@@ -128,7 +128,7 @@ describe("Household Finance API", () => {
 
   describe("GET /api/transactions", () => {
     it("returns an empty list when there are no rows", async () => {
-      const res = await request(app).get("/api/transactions");
+      const res = await request(app).get("/api/transactions").set(await authHeader());
 
       assert.equal(res.status, 200);
       assert.deepEqual(res.body, []);
@@ -148,7 +148,7 @@ describe("Household Finance API", () => {
         date: "2026-08-11",
       });
 
-      const res = await request(app).get("/api/transactions");
+      const res = await request(app).get("/api/transactions").set(await authHeader());
 
       assert.equal(res.status, 200);
       assert.equal(res.body.length, 2);
