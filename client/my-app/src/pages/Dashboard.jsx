@@ -99,6 +99,13 @@ export default function Dashboard() {
   setError("");
   setSuccess("");
   setEditingTransaction(transaction);
+
+}
+
+function handleCancelEdit() {
+  setEditingTransaction(null);
+  setError("");
+  setSuccess("");
 }
 
   async function handleDeleteTransaction(id) {
@@ -174,6 +181,7 @@ export default function Dashboard() {
         transaction={editingTransaction}
         categories={categories}
         onSubmit={handleSubmitTransaction}
+        onCancel={handleCancelEdit}
         loading={submitting}
           /> 
         <TransactionList

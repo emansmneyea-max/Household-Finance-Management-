@@ -10,6 +10,7 @@ const initialForm = {
 
 export default function TransactionForm({
   onSubmit,
+  onCancel,
   loading,
   transaction,
   categories = [],
@@ -19,6 +20,11 @@ export default function TransactionForm({
 
   useEffect(() => {
   if (!transaction) {
+     setForm({
+      ...initialForm,
+      date: new Date().toISOString().split("T")[0],
+    });
+    setError("");
     return;
   }
 
@@ -143,6 +149,16 @@ export default function TransactionForm({
         <button type="submit" className="button button--primary" disabled={loading}>
           {loading ? "Saving..." : transaction ? "Save changes" : "Add Transaction"}
         </button>
+        {transaction && (
+       <button
+       type="button"
+       className="button"
+       onClick={onCancel}
+       disabled={loading}
+       >
+      Cancel
+         </button>
+  )}
       </form>
     </section>
   );
