@@ -5,13 +5,8 @@ import request from "supertest";
 import app from "../src/app.js";
 import { closeDatabase, resetDatabase } from "./helpers.js";
 
-async function postTransaction(body) {
-  return request(app)
-    .post("/api/transactions")
-    .set(await authHeader())
-    .send(body);
-}
 let token;
+
 async function authHeader() {
   if (!token) {
     await request(app).post("/api/users").send({
@@ -28,6 +23,28 @@ async function authHeader() {
   return { Authorization: `Bearer ${token}` };
 }
 
+async function postTransaction(body) {
+  return request(app)
+    .post("/api/transactions")
+    .set(await authHeader())
+    .send(body);
+}
+
+async function authGet(url) {
+  return request(app).get(url).set(await authHeader());
+}
+
+async function authPost(url, body) {
+  return request(app).post(url).set(await authHeader()).send(body);
+}
+
+async function authPut(url, body) {
+  return request(app).put(url).set(await authHeader()).send(body);
+}
+
+async function authDelete(url) {
+  return request(app).delete(url).set(await authHeader());
+}
 
 describe("Household Finance API", () => {
   before(async () => {
@@ -36,7 +53,7 @@ describe("Household Finance API", () => {
 
   beforeEach(async () => {
     await resetDatabase();
-    token=null;
+    token = null;
   });
 
   after(async () => {
@@ -96,7 +113,7 @@ describe("Household Finance API", () => {
     });
 
     it("saves category_id when the category exists", async () => {
-      const category = await request(app).post("/api/categories").set(await authHeader()).send({
+      const category = await authPost("/api/categories", {
         name: "Food",
         type: "expense",
       });
@@ -128,7 +145,7 @@ describe("Household Finance API", () => {
 
   describe("GET /api/transactions", () => {
     it("returns an empty list when there are no rows", async () => {
-      const res = await request(app).get("/api/transactions").set(await authHeader());
+      const res = await authGet("/api/transactions");
 
       assert.equal(res.status, 200);
       assert.deepEqual(res.body, []);
@@ -148,7 +165,7 @@ describe("Household Finance API", () => {
         date: "2026-08-11",
       });
 
-      const res = await request(app).get("/api/transactions").set(await authHeader());
+      const res = await authGet("/api/transactions");
 
       assert.equal(res.status, 200);
       assert.equal(res.body.length, 2);
@@ -165,67 +182,59 @@ describe("Household Finance API", () => {
         description: "Coffee",
       });
 
-      const res = await request(app).get(
-        `/api/transactions/${created.body.id}`
-      );
+      const res = await authGet(`/api/transactions/${created.body.id}`);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.description, "Coffee");
     });
 
     it("returns 404 when the id does not exist", async () => {
-      const res = await request(app).get("/api/transactions/999");
+      const res = await authGet("/api/transactions/999");
 
       assert.equal(res.status, 404);
       assert.equal(res.body.error, "Transaction not found");
     });
 
     it("returns 400 for a non-numeric id", async () => {
-      const res = await request(app).get("/api/transactions/abc");
+      const res = await authGet("/api/transactions/abc");
 
       assert.equal(res.status, 400);
       assert.equal(res.body.error, "Invalid transaction id");
     });
   });
 
-
   describe("PUT /api/transactions/:id", () => {
-  it("updates an existing transaction", async () => {
-    const created = await postTransaction({
-      amount: 10,
-      type: "expense",
-      description: "Coffee",
-    });
+    it("updates an existing transaction", async () => {
+      const created = await postTransaction({
+        amount: 10,
+        type: "expense",
+        description: "Coffee",
+      });
 
-    const res = await request(app)
-      .put(`/api/transactions/${created.body.id}`)
-      .send({
+      const res = await authPut(`/api/transactions/${created.body.id}`, {
         amount: 12,
         type: "expense",
         description: "Coffee (updated)",
         date: "2026-08-10",
       });
 
-    assert.equal(res.status, 200);
-    assert.equal(res.body.description, "Coffee (updated)");
-    assert.equal(Number(res.body.amount), 12);
-  });
-
-it("returns 404 when the id does not exist", async () => {
-  const res = await request(app)
-    .put("/api/transactions/999")
-    .send({
-      amount: 12,
-      type: "expense",
-      description: "Missing",
-      date: "2026-08-10",
+      assert.equal(res.status, 200);
+      assert.equal(res.body.description, "Coffee (updated)");
+      assert.equal(Number(res.body.amount), 12);
     });
 
-  assert.equal(res.status, 404);
-  assert.equal(res.body.error, "Transaction not found");
-});
+    it("returns 404 when the id does not exist", async () => {
+      const res = await authPut("/api/transactions/999", {
+        amount: 12,
+        type: "expense",
+        description: "Missing",
+        date: "2026-08-10",
+      });
 
-});
+      assert.equal(res.status, 404);
+      assert.equal(res.body.error, "Transaction not found");
+    });
+  });
 
   describe("DELETE /api/transactions/:id", () => {
     it("deletes a transaction", async () => {
@@ -235,31 +244,26 @@ it("returns 404 when the id does not exist", async () => {
         description: "Snack",
       });
 
-      const res = await request(app).delete(
-        `/api/transactions/${created.body.id}`
-      );
+      const res = await authDelete(`/api/transactions/${created.body.id}`);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.message, "Transaction deleted");
 
-      const missing = await request(app).get(
-        `/api/transactions/${created.body.id}`
-      );
+      const missing = await authGet(`/api/transactions/${created.body.id}`);
       assert.equal(missing.status, 404);
     });
 
     it("returns 404 when deleting a missing id", async () => {
-      const res = await request(app).delete("/api/transactions/999");
+      const res = await authDelete("/api/transactions/999");
 
       assert.equal(res.status, 404);
       assert.equal(res.body.error, "Transaction not found");
     });
   });
 
-
   describe("POST /api/categories", () => {
     it("creates a category and returns 201", async () => {
-      const res = await request(app).post("/api/categories").send({
+      const res = await authPost("/api/categories", {
         name: "Groceries",
         type: "expense",
       });
@@ -271,7 +275,7 @@ it("returns 404 when the id does not exist", async () => {
     });
 
     it("rejects missing name or type", async () => {
-      const res = await request(app).post("/api/categories").send({
+      const res = await authPost("/api/categories", {
         name: "Groceries",
       });
 
@@ -282,19 +286,19 @@ it("returns 404 when the id does not exist", async () => {
 
   describe("GET /api/categories", () => {
     it("returns an empty list when there are no rows", async () => {
-      const res = await request(app).get("/api/categories");
+      const res = await authGet("/api/categories");
 
       assert.equal(res.status, 200);
       assert.deepEqual(res.body, []);
     });
 
     it("returns created categories", async () => {
-      await request(app).post("/api/categories").send({
+      await authPost("/api/categories", {
         name: "Salary",
         type: "income",
       });
 
-      const res = await request(app).get("/api/categories");
+      const res = await authGet("/api/categories");
 
       assert.equal(res.status, 200);
       assert.equal(res.body.length, 1);
@@ -304,21 +308,19 @@ it("returns 404 when the id does not exist", async () => {
 
   describe("GET /api/categories/:id", () => {
     it("returns one category", async () => {
-      const created = await request(app).post("/api/categories").send({
+      const created = await authPost("/api/categories", {
         name: "Rent",
         type: "expense",
       });
 
-      const res = await request(app).get(
-        `/api/categories/${created.body.id}`
-      );
+      const res = await authGet(`/api/categories/${created.body.id}`);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.name, "Rent");
     });
 
     it("returns 404 when the id does not exist", async () => {
-      const res = await request(app).get("/api/categories/999");
+      const res = await authGet("/api/categories/999");
 
       assert.equal(res.status, 404);
       assert.equal(res.body.error, "Category not found");
@@ -327,26 +329,22 @@ it("returns 404 when the id does not exist", async () => {
 
   describe("DELETE /api/categories/:id", () => {
     it("deletes a category", async () => {
-      const created = await request(app).post("/api/categories").send({
+      const created = await authPost("/api/categories", {
         name: "Snacks",
         type: "expense",
       });
 
-      const res = await request(app).delete(
-        `/api/categories/${created.body.id}`
-      );
+      const res = await authDelete(`/api/categories/${created.body.id}`);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.message, "Category deleted");
 
-      const missing = await request(app).get(
-        `/api/categories/${created.body.id}`
-      );
+      const missing = await authGet(`/api/categories/${created.body.id}`);
       assert.equal(missing.status, 404);
     });
 
     it("returns 404 when deleting a missing id", async () => {
-      const res = await request(app).delete("/api/categories/999");
+      const res = await authDelete("/api/categories/999");
 
       assert.equal(res.status, 404);
       assert.equal(res.body.error, "Category not found");
@@ -475,5 +473,3 @@ it("returns 404 when the id does not exist", async () => {
     });
   });
 });
-
-
