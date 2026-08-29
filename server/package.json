@@ -1,0 +1,29 @@
+{
+  "name": "household-finance-server",
+  "version": "1.0.0",
+  "description": "Express API for Household Finance Tracker",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test --test-concurrency=1 tests/api.test.js"
+  },
+  "keywords": [
+    "finance",
+    "express",
+    "postgresql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.4"
+  }
+}
